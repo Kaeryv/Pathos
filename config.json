@@ -1,0 +1,47 @@
+{
+  "description":"This configuration file is used by several EMPATHOS submodules",
+  "affectnet":
+  {
+    "manual":{
+      "database_root":"/home/kaeryv/Database/AffectNet/manual/",
+      "meta":{
+        "training":"training.csv",
+        "validation":"validation.csv"
+      }
+    },
+    "automatic":{
+      "database_root":"/home/kaeryv/Database/AffectNet/automatic/",
+      "meta":{
+        "both":"automatic.csv"
+      }
+    },
+    "processed_foldername":"processed",
+    "raw_foldername":"raw",
+
+    "emotions_mapping":
+    [
+      "neutral",
+      "happy",
+      "sad",
+      "surprise",
+      "fear",
+      "disgust",
+      "anger",
+      "contempt",
+      "none",
+      "uncertain",
+      "noface"
+    ],
+    "affectnet2fer":
+    [
+      6,
+      3,
+      4,
+      5,
+      2,
+      1,
+      0,
+      1,7,7,7
+    ]
+  }
+}
