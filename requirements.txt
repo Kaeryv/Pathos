@@ -1,0 +1,9 @@
+tensorflow
+tflearn
+
+imutils
+pandas
+opencv-python
+dlib
+sklearn
+scipy
