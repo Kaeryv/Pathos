@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/usr/bin/env python3
 
 '''
  Main
@@ -27,6 +27,10 @@
   On windows, use
 
     python main.py
+
+
+Entrainement:
+    python main.py --train --model test
 
 '''
 
