@@ -8,6 +8,7 @@
  Author
 
   Nicolas Roy (UNamur)
+  Travail effectué au département de psychologie de l'UNamur (2018)
 
  Usage
 
@@ -48,16 +49,15 @@ from pathos.kerasmodel import EmotionRecognitionModel
 from pathos import utils as utils
 from pathos.anatomy.eye import Eye
 
-ui_scale = 0.5
+ui_scale = 1.0
 
 def annotate_frame(frame):
-    ui_scale = (bgr_image.shape[1] / 1024.0)
+    #ui_scale = (bgr_image.shape[1] / 1024.0)
     gray_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2GRAY)
     # detect faces in the grayscale image
     rects = detector(gray_image, 1)
     # loop over the face detections
     for (i, rect) in enumerate(rects):
-        print('face', i)
         x1, x2, y1, y2 = rect.tl_corner().x, rect.br_corner().x, rect.tl_corner().y, rect.br_corner().y
         face_coordinates = x1, y1, x2-x1, y2-y1
         
@@ -136,16 +136,16 @@ def annotate_frame(frame):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Annotates media with 7 emotions weights.')
-    parser.add_argument('--image', dest="image", help='Any supported media.')
-    parser.add_argument('--folder', dest="folder", help='Any supported media folder.')
-    parser.add_argument('--video', dest="video", help='Any supported media.')
-    parser.add_argument('--json', dest="json", help='Metadata.')
-    parser.add_argument('--output', dest="output", help='Any supported media.')
-    parser.add_argument('--model', dest="model", help='Any supported media.')
-    parser.add_argument('--webcam', action='store_true')
-    parser.add_argument('--train', action='store_true')
+    parser.add_argument('--image', '-i', dest="image", help='Any supported media.')
+    parser.add_argument('--folder', '-f', dest="folder", help='Any supported media folder.')
+    parser.add_argument('--video', '-v', dest="video", help='Any supported media.')
+    parser.add_argument('--json', '-j', dest="json", help='Metadata.')
+    parser.add_argument('--output', '-o', dest="output", help='Any supported media.')
+    parser.add_argument('--model', '-m',dest="model", help='Any supported media.')
+    parser.add_argument('--webcam','-w', action='store_true')
+    parser.add_argument('--train','-t', action='store_true')
     args = parser.parse_args()
-    print(args.webcam)
+    #print(args.webcam)
     
     print('[Info] Loading dlib face detector') 
     detector = dlib.get_frontal_face_detector()
@@ -210,12 +210,16 @@ if __name__ == '__main__':
         cap = cv2.VideoCapture("./" + args.video)
         print(args.video)
         out = cv2.VideoWriter(args.output, cv2.VideoWriter_fourcc(*'MPEG'), 20.0, (int(cap.get(3)),int(cap.get(4))))
-        print("test")
+        frames = -1
         while cap.isOpened() and out.isOpened():
+            frames = frames + 1
+            print("Processed frame " + str(frames))
+            if frames < 1000:
+                continue
             # Capturing the image from webcam
             bgr_image = cap.read()[1]
             annotate_frame(bgr_image)
-            cv2.imshow('Webcam', bgr_image)
+            cv2.imshow(args.video, bgr_image)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 out.write(bgr_image)
                 cap.release()

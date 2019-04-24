@@ -3,8 +3,9 @@ from keras.layers import Dense, Activation, Conv2D, MaxPool2D, Dropout, Dense, I
 from keras.callbacks import TensorBoard
 from pathos.loader import DatasetLoader
 import tensorflow as tf
+import os
+from pathos.constants import SAVE_DIRECTORY
 
-SAVE_DIRECTORY = 'saved_data'
 
 class EmotionRecognitionModel(object):
     def __init__(self, name):
@@ -37,19 +38,20 @@ class EmotionRecognitionModel(object):
     def load_dataset(self):
         if self.dataset is None:
             self._dataset = DatasetLoader()
+        else:
+            print("[WARN] Reloading dataset.")
         self._dataset.load_from_save()
 
 
     def save_model(self):
-        import os
+        path = os.path.join(SAVE_DIRECTORY, self._name)
         self._model.save(os.path.join(SAVE_DIRECTORY, self._name))
-        print("[INFO] Model saved.")
+        print("[INFO] Model saved as [" + path + "]")
 
     def load_model(self):
-        import os
-        print("looking for network in " + os.path.join(SAVE_DIRECTORY, self._name + ".keras"))
-        if os.path.isfile(os.path.join(SAVE_DIRECTORY, self._name + ".keras")):
-            self._model.load_weights(os.path.join(SAVE_DIRECTORY, self._name + '.keras'))
+        print("looking for network in " + os.path.join(SAVE_DIRECTORY, self._name))
+        if os.path.isfile(os.path.join(SAVE_DIRECTORY, self._name)):
+            self._model.load_weights(os.path.join(SAVE_DIRECTORY, self._name))
             print("[INFO] Model loaded from filesystem.")
         else:
             print("[WARNING] Model not present in filesystem.")
@@ -60,30 +62,9 @@ class EmotionRecognitionModel(object):
         
         if image is None:
             return None
+
         image = image.reshape([-1, 48, 48, 1])
 
-        #outputs = [m.predict(image) for m in self.observers]
-        #print([d.shape for d in outputs])
-        #output = outputs[0][0,:,:,:].reshape([-1, 24, 24*64, 1])
-        #print(outputs[4].shape)
-
-        #output = self.conv0[0]
-        #print(self.conv0[0].shape)
-        #print(output.reshape([-1, 24, 24, 1]).shape)
-        #output = output.reshape([-1, output.shape[1], output.shape[2]*output.shape[3], 1])
-        #for i in np.arange(0, int(output.shape[2])):
-        #    plt.subplot(8, 8, i + 1)
-        #    show = output[:,:,i]
-        #    print(i)
-        #    plt.pcolor(show, cmap='hot')
-        #output = cv2.cvtColor(output[0,:,:,3], cv2.COLOR_GRAY2BGR)
-
-        #cv2.imshow('hotmap', output)
-
-        #plt.axis('off')
-        #plt.show()
-        #print([d.shape for d in outputs])
-        
         return self._model.predict(image)
 
     def train(self):
@@ -99,12 +80,15 @@ class EmotionRecognitionModel(object):
                 callbacks=[tensorboard],
                 validation_data=(self._dataset.images_test, self._dataset.labels_test))
 
-        self._model.save('test.keras')
+        self._model.save(os.path.join(SAVE_DIRECTORY + 'test.keras'))
     
     @property
     def model(self):
         return self._model
+
+
 if __name__ == '__main__':
+    print("[INFO] Use main entry point to manage models.")
     pass
 
     
